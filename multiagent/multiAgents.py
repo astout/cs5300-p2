@@ -75,7 +75,46 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+
+        #import the manhattanDistance function
+        from util import manhattanDistance
+
+        "Print the provided information"
+        # print "successorGameState: ", successorGameState
+        # print "newPos:\n", newPos
+        # print "newFood: ", newFood
+        # print "newGhostStates: ", newGhostStates
+        # print "newScaredTimes: ", newScaredTimes
+        
+        #get the food positions as a list for the current state
+        foodPositions = currentGameState.getFood().asList()
+
+        #first, check win conditions
+        if action == 'Stop':
+            return -999999
+        if successorGameState.isWin():
+          return 999999
+
+        #if the ghost is too close and we can't eat him,
+        #return big negative value
+        for ghostState in newGhostStates:
+          if ghostState.getPosition() == newPos and ghostState.scaredTimer is 0:
+            return -999999 
+
+        #store the manhattanDistances of each food position to the next position
+        distances = []
+        for food in foodPositions:
+          #store the food coordinates in xy1 to use in manhattanDistance
+          xy1 = [food[0], food[1]]
+          #store the successor coordinates in xy1 to use in manhattanDistance
+          xy2 = [newPos[0], newPos[1]]
+          #get the reciprocal of the manhattan distance per project hint
+          man = -1*manhattanDistance(xy1, xy2)
+          distances.append(man)  #append the manhattan distance to this food
+
+        #return the best evaluation  
+        return max(distances)
+
 
 def scoreEvaluationFunction(currentGameState):
     """
